@@ -1,0 +1,11 @@
+langdetect
+pdfplumber
+pytessaract
+textblob
+pillow
+nltk==3.5
+datefinder
+spacy
+spacy 
+download 
+en_core_web_sm

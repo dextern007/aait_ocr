@@ -1,0 +1,29 @@
+{
+  'issuer': 'My Company (San Francisco)',
+  'amount': 143,750.00,
+  'amount_untaxed': 125,000.00,
+  'invoice_number': 'INV/2022/08/0003',
+  'date': [08/08/2022],
+  'vat': [],
+  'currency': 'USD',
+  'total_amount' : 25500,
+  'due_date' : [08/08/2022]
+  'lines': [
+    {
+      'product': '[FURN_8999] Three-Seat Sofa',
+      'Quantity': 5,
+      'UnitPrice': 15000.00,
+      'Taxes': [15,10],
+      'Amount': 7500.00
+
+    },
+    {
+      'product': '[FURN_8220] Four Person Desk',
+      'Quantity': 5,
+      'UnitPrice': 25500,
+      'Taxes': [15,10],
+      'Amount': 117500.00
+    }
+  ],
+  'desc': 'Invoice from My Company (San Francisco)'
+}
