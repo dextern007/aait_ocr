@@ -17,7 +17,7 @@ import pandas as pd
 
 from Invoice_ocr.predictor import Predictor
 
-
+import base64
 
 
 class OCRView(APIView):
@@ -26,7 +26,7 @@ class OCRView(APIView):
         file = request.data['document']
         print(file)
         print(type(file))
-        ocr                = Ocr(source_document=file)
+        ocr                = Ocr(source_document=base64.b64decode(file.encode('utf-8')))
         extracted_text     = ocr.extract_text(lang=lang)
         launguage_code     = deduct_launguage.get_launguage_code(extracted_text)
 
