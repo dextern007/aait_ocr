@@ -24,8 +24,8 @@ class OCRView(APIView):
     def post(self,request,format=None):
         lang = request.data["lang"]
         file = request.data['document']
-        print(file)
-        print(type(file))
+        # print(file)
+        # print(type(file))
         ocr                = Ocr(source_document=base64.b64decode(file.encode('utf-8')))
         extracted_text     = ocr.extract_text(lang=lang)
         launguage_code     = deduct_launguage.get_launguage_code(extracted_text)
@@ -46,8 +46,8 @@ class OCRView(APIView):
         customer_id        =   predictor.CustomerId()
         customer_name      =   predictor.CustomerName(names)
         vendor_name        =   predictor.VendorName(organizations)
-        vendor_location     =   predictor.VendorLocation()
-        vendor_address    =   predictor.VendorAddress()
+        vendor_location    =   predictor.VendorLocation()
+        vendor_address     =   predictor.VendorAddress()
         start_date         =   predictor.StartDate(dates)
         end_date           =   predictor.DueDate(dates)
         invoice_number     =   predictor.InvoiceId()
