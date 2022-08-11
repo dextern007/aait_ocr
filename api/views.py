@@ -26,7 +26,7 @@ class OCRView(APIView):
         file = request.data['document']
         print(file)
         print(type(file))
-        ocr                = Ocr(source_document=file.read())
+        ocr                = Ocr(source_document=file)
         extracted_text     = ocr.extract_text(lang=lang)
         launguage_code     = deduct_launguage.get_launguage_code(extracted_text)
 
