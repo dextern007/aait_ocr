@@ -23,7 +23,8 @@ from Invoice_ocr.predictor import Predictor
 class OCRView(APIView):
     def post(self,request,format=None):
         lang = request.data["lang"]
-        file = request.FILES['document']
+        file = request.data['document']
+        print(file)
         ocr                = Ocr(source_document=file.read())
         extracted_text     = ocr.extract_text(lang=lang)
         launguage_code     = deduct_launguage.get_launguage_code(extracted_text)

@@ -6,6 +6,6 @@ pillow
 nltk==3.5
 datefinder
 spacy
-spacy 
+# spacy 
 download 
 en_core_web_sm

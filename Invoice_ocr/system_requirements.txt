@@ -1,7 +1,7 @@
 python3
 python3-minimal
 python3-pip
-ocrmypdf
+sudo apt install ocrmypdf
 sudo apt install tesseract-ocr tesseract-ocr-all
 sudo apt-get install tesseract-ocr-LANG
 
