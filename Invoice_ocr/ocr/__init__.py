@@ -1,3 +1,4 @@
+from cgitb import text
 import re
 from numpy import source
 from pdf2image import convert_from_bytes,convert_from_path
@@ -12,7 +13,7 @@ import numpy
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import RegexpTokenizer
 
-
+from deep_translator import *
 custom_config = r"""Arabic
 +Armenian
 +Bengali
@@ -173,7 +174,7 @@ custom_config = r"""Arabic
 +uzb_cyrl
 +vie
 +yid
-+yor --psm 6
++yor --psm 10
 """
 
 class Ocr:
@@ -258,9 +259,11 @@ class Ocr:
         return res
 
 
-    def split_lines(self,txt):
+    def split_lines(self,txt,lang):
         txt = self.remove_empty_lines(txt)
-        txt = ts.google(txt, to_language='en')
+        txt = ts.google(txt,to_language='en')
+        # translated = MicrosoftTranslator(source='auto', target='de').translate(txt)
+        # print(translated)
         res = []
         # tokenizer = RegexpTokenizer(r'\w+')
         # words = tokenizer.tokenize(txt)
