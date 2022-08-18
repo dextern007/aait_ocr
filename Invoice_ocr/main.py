@@ -20,55 +20,59 @@ lang =  input("Choose OCR Launguage :")
 ocr                = Ocr(source_document=pdf_path)
 extracted_text     = ocr.extract_text(lang=lang)
 launguage_code     = deduct_launguage.get_launguage_code(extracted_text)
-
-filtered_text_data = ocr.split_lines(extracted_text)
-
-
-
-predictor = Predictor(data=filtered_text_data)
-
-dates              =   predictor.getall_date()
-names              =   predictor.getall_names()
-organizations      =   predictor.getall_organizations()
-amounts            =   predictor.getall_amounts()
-numbers            =   predictor.getall_numbers()
-product_lines      =   predictor.ProductLines()
-invoice_date       =   predictor.InvoiceDate(dates)
-customer_id        =   predictor.CustomerId()
-customer_name      =   predictor.CustomerName(names)
-vendor_name        =   predictor.VendorName(organizations)
-start_date         =   predictor.StartDate(dates)
-end_date           =   predictor.DueDate(dates)
-invoice_number     =   predictor.InvoiceId()
-vat_code           =   predictor.VendorTaxId()
-untaxed_amount     =   predictor.SubTotal()
-taxes              =   predictor.TotalTax()
-total              =   predictor.InvoiceTotal()
-purchase_order     =   predictor.PurchaseOrder()
+filtered_text_data = ocr.split_lines(extracted_text,launguage_code)
+print(launguage_code)
+# new_extrction = ocr.split_images(lang)
 
 
-respose = {}
-respose["all_dates"]     = dates
-respose["names"]         = names
-# respose["organizations"] = organizations
-respose["amounts"]       = amounts
-respose["numbers"]       = numbers
-respose["product_lines"] = product_lines
-respose["invoice_date"]  = invoice_date
-respose["customer_id"]   = customer_id
-respose["customer_name"] = customer_name
-respose["vendor_name"]   = vendor_name
-respose["start_date"]    = start_date
-respose["end_date"]      = end_date
-respose["invoice_number"]= invoice_number
-respose["vat_code"]      = vat_code
-respose["untaxed_amount"]= untaxed_amount
-respose["taxes"]         = taxes
-respose["total"]         = total
-respose["purchase_order"]= purchase_order
+# predictor = Predictor(data=filtered_text_data)
+
+# predictor.get_ents()
+# print(extracted_text)
+print(filtered_text_data["txt"])
+
+# dates              =   predictor.getall_date()
+# names              =   predictor.getall_names()
+# organizations      =   predictor.getall_organizations()
+# amounts            =   predictor.getall_amounts()
+# numbers            =   predictor.getall_numbers()
+# product_lines      =   predictor.ProductLines()
+# invoice_date       =   predictor.InvoiceDate(dates)
+# customer_id        =   predictor.CustomerId()
+# customer_name      =   predictor.CustomerName(names)
+# vendor_name        =   predictor.VendorName(organizations)
+# start_date         =   predictor.StartDate(dates)
+# end_date           =   predictor.DueDate(dates)
+# invoice_number     =   predictor.InvoiceId()
+# vat_code           =   predictor.VendorTaxId()
+# untaxed_amount     =   predictor.SubTotal()
+# taxes              =   predictor.TotalTax()
+# total              =   predictor.InvoiceTotal()
+# purchase_order     =   predictor.PurchaseOrder()
 
 
-print(respose)
+# respose = {}
+# respose["all_dates"]     = dates
+# respose["names"]         = names
+# # respose["organizations"] = organizations
+# respose["amounts"]       = amounts
+# respose["numbers"]       = numbers
+# respose["product_lines"] = product_lines
+# respose["invoice_date"]  = invoice_date
+# respose["customer_id"]   = customer_id
+# respose["customer_name"] = customer_name
+# respose["vendor_name"]   = vendor_name
+# respose["start_date"]    = start_date
+# respose["end_date"]      = end_date
+# respose["invoice_number"]= invoice_number
+# respose["vat_code"]      = vat_code
+# respose["untaxed_amount"]= untaxed_amount
+# respose["taxes"]         = taxes
+# respose["total"]         = total
+# respose["purchase_order"]= purchase_order
+
+
+# print(filtered_text_data["txt"])
 # for i in respose:
 #     print(i)
 #     print("------------------")

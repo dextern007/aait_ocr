@@ -2,7 +2,7 @@ from cgitb import text
 import re
 from numpy import source
 from pdf2image import convert_from_bytes,convert_from_path
-from Invoice_ocr.ocr import convert_to_image
+from ocr import convert_to_image
 from PIL import Image
 import pytesseract
 from pytesseract import Output
@@ -183,23 +183,46 @@ class Ocr:
     def __init__(self,source_document):
         self.source_document = source_document
 
+
+    def binarization(self,image):
+        kernel = numpy.ones((1, 1), numpy.uint8)
+        se=cv2.getStructuringElement(cv2.MORPH_RECT , (8,8))
+        bg=cv2.morphologyEx(image, cv2.MORPH_DILATE, se)
+        
+        
+        out_gray=cv2.divide(image, bg, scale=255)
+        out_binary=cv2.threshold(out_gray, 0, 255, cv2.THRESH_OTSU )[1] 
+        img = cv2.dilate(out_binary, kernel, iterations=1)
+        img = cv2.erode(img, kernel, iterations=1)
+        return img
+
+
+
+
+
+
     def pre_process_image(self,image):
         """This function will pre-process a image with: cv2 & deskew
         so it can be process by tesseract"""
 
         pil_image = image.convert('RGB') 
         open_cv_image = numpy.array(pil_image) 
+        # image = np.full((300, 300, 3), 255).astype(np.uint8)
+
+        
         # Convert RGB to BGR 
         img = open_cv_image[:, :, ::-1].copy() 
-        # img = cv2.resize(img, None, fx=1.2, fy=1.2, interpolation=cv2.INTER_CUBIC)
-        # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) #change color format from BGR to RGB
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) #format image to gray scale
-        # kernel = numpy.ones((1, 1), numpy.uint8)
-        # img = cv2.dilate(img, kernel, iterations=1)
-        # img = cv2.erode(img, kernel, iterations=1)
+
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
+        binarization = self.binarization(img)
+     
+        # cv2.imshow('custom window name', th)
+        # cv2.imshow(img)
+        
+        
         # cv2.threshold(cv2.GaussianBlur(img, (5, 5), 0), 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
-        # img = cv2.threshold(cv2.bilateralFilter(img, 5, 75, 75), 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+        # img = cv2.threshold(cv2.GaussianBlur(img, 5, 75, 75), 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
         # cv2.threshold(cv2.medianBlur(img, 3), 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
@@ -209,10 +232,85 @@ class Ocr:
 
         # cv2.adaptiveThreshold(cv2.medianBlur(img, 3), 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 2)
         
-        # cv2.imshow(img)
-        return img
+       
+        return binarization
+        
 
-    
+    def split_images(self,lang):
+
+        images = convert_to_image.get_images(self.source_document)
+
+        for img in images:
+            # cv2.imread() -> takes an image as an input
+            pil_image = img.convert('RGB') 
+            open_cv_image = numpy.array(pil_image) 
+            # Convert RGB to BGR 
+            img = open_cv_image[:, :, ::-1].copy() 
+            h, w, channels = img.shape
+            
+            half = w//2
+            
+            
+            # this will be the first column
+            left_part = img[:, :half] 
+            
+            # [:,:half] means all the rows and
+            # all the columns upto index half
+            
+            # this will be the second column
+            right_part = img[:, half:]  
+            
+            # [:,half:] means al the rows and all
+            # the columns from index half to the end
+            # cv2.imshow is used for displaying the image
+
+            
+            # this is horizontal division
+            half2 = h//2
+            
+            top = img[:half2, :]
+            bottom = img[half2:, :]
+            print("TOP")
+            self.extract_text_new(self.binarization(top),lang)
+            print("BOTTOM")
+            self.extract_text_new(self.binarization(bottom),lang)
+            # print("LEFT")
+            # self.extract_text_new(left_part,lang)
+            # print("RIGHT")
+            # self.extract_text_new(right_part,lang)
+        
+        
+    def extract_easy_ocr(self,image):
+        import easyocr
+        reader = easyocr.Reader(['ch_sim','en']) # this needs to run only once to load the model into memory
+        result = reader.readtext(self.pre_process_image(image), gpu=False)
+        print(result)
+
+    def extract_text_new(self,img,lang):
+        # chinese_w_1
+        response = ""
+        
+
+        
+       
+        if lang == "":
+            text = pytesseract.image_to_string(img,config=custom_config)
+        else:
+            text = pytesseract.image_to_string(img,config=custom_config,lang=lang)
+
+        # print(d)
+
+        
+
+        response=response+text+"\n" 
+
+
+        # script_name, confidence = self.detect_image_lang(image)
+
+        # print(script_name,confidence)
+        
+        print(response)
+
     def extract_text(self,lang):
         # chinese_w_1
         response = ""
@@ -220,12 +318,12 @@ class Ocr:
 
         
         for image in images:
+            self.extract_easy_ocr(image)
             # thresh = self.pre_process_image(image)
             thresh = image
-            if lang == "":
-                text = pytesseract.image_to_string(thresh,config=custom_config)
-            else:
-                text = pytesseract.image_to_string(thresh,config=custom_config,lang=lang)
+            
+            text = pytesseract.image_to_string(thresh,config=custom_config,lang=lang)
+            
 
             # print(d)
 
@@ -237,7 +335,7 @@ class Ocr:
         # script_name, confidence = self.detect_image_lang(image)
 
         # print(script_name,confidence)
-        # print(response)
+        
         return response
 
 
@@ -259,8 +357,8 @@ class Ocr:
         return res
 
 
-    def split_lines(self,txt,lang):
-        txt = self.remove_empty_lines(txt)
+    def split_lines(self,ntxt,lang):
+        txt = self.remove_empty_lines(ntxt)
         txt = ts.google(txt,to_language='en')
         # translated = MicrosoftTranslator(source='auto', target='de').translate(txt)
         # print(translated)

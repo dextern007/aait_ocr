@@ -8,9 +8,13 @@ class Predictor:
 
     def __init__(self,data):
         self.data = data
-        self.nlp = spacy.load("en_core_web_sm")
+        self.nlp = spacy.load("/home/diwahar/Work/aait_ocr/annotation/train/model-last")
 
 
+    def get_ents(self):
+        doc = self.nlp(self.data["txt"])
+        for ent in doc.ents:
+            print(ent.text, ent.start_char, ent.end_char, ent.label_)
 
     def getall_date(self):
         matches = list(datefinder.find_dates(self.data["txt"]))
