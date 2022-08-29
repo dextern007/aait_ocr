@@ -86,8 +86,8 @@ class OCRView(APIView):
         respose["total"]         = total
         respose["purchase_order"]= purchase_order
 
-
-        return Response({"predicted_data":respose,"extracted_text":filtered_text_data})
+        trained_output = predictor.get_trained_ents()
+        return Response({"predicted_data":respose,"extracted_text":filtered_text_data,"trained_out":trained_output})
 
 
 import numpy
