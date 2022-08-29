@@ -5,6 +5,8 @@ from PIL import Image
 import pytesseract
 import numpy
 
+from api.views import convert_np_image
+
 
 
 
