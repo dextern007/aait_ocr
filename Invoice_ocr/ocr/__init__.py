@@ -13,7 +13,7 @@ from nltk.tokenize import word_tokenize
 from nltk.tokenize import RegexpTokenizer
 from Invoice_ocr.ocr import image_processing
 
-from deep_translator import *
+# from deep_translator import *
 custom_config = r"""Arabic
 +Armenian
 +Bengali
