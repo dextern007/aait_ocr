@@ -1,0 +1,80 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+
+</head>
+<body>
+    
+  <input type="file" name="image" id="image" onchange="readURL(this);"/>
+  <div class="image_container">
+      <img id="blah" src="#" alt="your image" />
+  </div>
+  <div id="cropped_result"></div>  
+  <button id="crop_button">Crop</button> 
+
+<p><textarea height="1000" width="100%" id="dataPath" style="
+  width: 100%;
+  height: 600;
+"></textarea></p>
+
+<script type="text/javascript" defer>
+  function readURL(input) {
+      if (input.files && input.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+              $('#blah').attr('src', e.target.result)
+          };
+          reader.readAsDataURL(input.files[0]);
+          setTimeout(initCropper, 1000);
+      }
+  }
+  function initCropper(){
+      var image = document.getElementById('blah');
+      var cropper = new Cropper(image, {
+        aspectRatio: NaN,
+        crop: function(e) {
+          console.log(e.detail.x);
+          console.log(e.detail.y);
+        }
+      });
+
+      // On crop button clicked
+      document.getElementById('crop_button').addEventListener('click', function(){
+          var imgurl =  cropper.getCroppedCanvas().toDataURL();
+          var img = document.createElement("img");
+          img.src = imgurl;
+          document.getElementById("cropped_result").appendChild(img);
+
+       
+
+              cropper.getCroppedCanvas().toBlob(function (blob) {
+                    var formData = new FormData();
+                    formData.append('croppedImage', blob,'file.jpg');
+                    // Use `jQuery.ajax` method
+                    $.ajax('ocr/', {
+                      method: "POST",
+                      data: formData,
+                      processData: false,
+                      contentType: false,
+                      success: function (result) {
+                          const res = document.getElementById("dataPath");
+                          res.value += "\n"+result.response;
+                          console.log(result.response);
+                        
+                      },
+                      error: function () {
+                        console.log('Upload error');
+                      }
+                    });
+              },'image/jpg', 0.9);
+
+      })
+  }
+</script>
+
+</body>
+
+</html>
+

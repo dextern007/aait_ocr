@@ -16,8 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from api import views
+from . import views as template_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('invoice-ocr/', views.OCRView.as_view()),
+    path('cropper/', template_view.predictImage,name="cropper"),
+    path('cropper/ocr/', views.CropperOCR.as_view()),
 ]

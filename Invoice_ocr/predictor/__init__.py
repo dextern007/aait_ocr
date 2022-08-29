@@ -1,17 +1,44 @@
 import datefinder
 import spacy
+from spacy import matcher
 import re
 from datetime import date as dt
 from datetime import datetime
+from spacy.matcher import Matcher
 
 class Predictor:
 
     def __init__(self,data):
         self.data = data
-        self.nlp = spacy.load("/home/diwahar/Work/aait_ocr/annotation/train/model-last")
+        # self.nlp = spacy.load("/home/diwahar/Work/aait_ocr/annotation/train/model-last")
+        self.nlp = spacy.load("en_core_web_lg")
+        self.matcher = Matcher(self.nlp.vocab)
 
+ 
+    def on_match(self,matcher, doc, id, matches):
+        print('Matched!', matches)
+
+        
+    def test_match(self,):
+        patterns = [
+        [{"ORTH": "invoice"}, {"ORTH": "number"},{"ORTH": "date"} , {"ORTH": "Date"}, {"ORTH": "email"}]
+        ]
+        self.matcher.add("TEST_PATTERNS", patterns, on_match=self.on_match)
+        doc = self.nlp(self.data["txt"])
+        matches = self.matcher(doc)
+
+    def get_trained_ents(self):
+        nlp = spacy.load("/media/diwahar/Storage/AAITPRO/aait_ocr/annotation/train/model-last")
+        data = dict()
+        doc = nlp(self.data["txt"])
+        for ent in doc.ents:
+            
+            data[ent.label_] = ent.text
+        
+        return data
 
     def get_ents(self):
+        data = dict()
         doc = self.nlp(self.data["txt"])
         for ent in doc.ents:
             print(ent.text, ent.start_char, ent.end_char, ent.label_)

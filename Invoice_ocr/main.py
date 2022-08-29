@@ -9,27 +9,45 @@ import pandas as pd
 import datefinder
 import spacy
 from predictor import Predictor
-
+import os
 
 pdf_path = str(input("Enter the PDF Path : "))
 lang =  input("Choose OCR Launguage :")
 #  = invoice_reader.get_text(pdf_path)
-
-
-
 ocr                = Ocr(source_document=pdf_path)
 extracted_text     = ocr.extract_text(lang=lang)
 launguage_code     = deduct_launguage.get_launguage_code(extracted_text)
 filtered_text_data = ocr.split_lines(extracted_text,launguage_code)
-print(launguage_code)
+# print(filtered_text_data["txt"])
+
+# import glob, os
+# os.chdir("ocr/chinese")
+# response =""
+# fo = open("annotation2.txt", "w+")
+# for file in glob.glob("*.pdf"):
+#     print(file)
+#     ocr                = Ocr(source_document=file)
+#     extracted_text     = ocr.extract_text(lang="chi_sim")
+#     launguage_code     = deduct_launguage.get_launguage_code(extracted_text)
+#     filtered_text_data = ocr.split_lines(extracted_text,launguage_code)
+#     txt=filtered_text_data["txt"]
+#     response = response+txt+"\n"+"---"+"\n"
+#     fo.write(response)
+
+
+
+# Close opend file
+
+# print(launguage_code)
 # new_extrction = ocr.split_images(lang)
-
-
-# predictor = Predictor(data=filtered_text_data)
-
-# predictor.get_ents()
 # print(extracted_text)
-print(filtered_text_data["txt"])
+
+predictor = Predictor(data=filtered_text_data)
+
+# predictor.get_trained_ents()
+# predictor.test_match()
+# print(extracted_text)
+
 
 # dates              =   predictor.getall_date()
 # names              =   predictor.getall_names()
@@ -58,19 +76,22 @@ print(filtered_text_data["txt"])
 # respose["amounts"]       = amounts
 # respose["numbers"]       = numbers
 # respose["product_lines"] = product_lines
-# respose["invoice_date"]  = invoice_date
+# respose["invoice_date"]  = invoice_date #done
 # respose["customer_id"]   = customer_id
 # respose["customer_name"] = customer_name
 # respose["vendor_name"]   = vendor_name
-# respose["start_date"]    = start_date
-# respose["end_date"]      = end_date
-# respose["invoice_number"]= invoice_number
+# respose["start_date"]    = start_date #done
+# respose["end_date"]      = end_date #done
+# respose["invoice_number"]= invoice_number #done
 # respose["vat_code"]      = vat_code
 # respose["untaxed_amount"]= untaxed_amount
 # respose["taxes"]         = taxes
 # respose["total"]         = total
 # respose["purchase_order"]= purchase_order
 
+# df = pd.DataFrame.from_dict(respose, orient='index')
+# df = df.transpose()
+# print(df.head())
 
 # print(filtered_text_data["txt"])
 # for i in respose:

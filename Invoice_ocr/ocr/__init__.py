@@ -1,8 +1,7 @@
-from cgitb import text
+
 import re
-from numpy import source
 from pdf2image import convert_from_bytes,convert_from_path
-from ocr import convert_to_image
+from Invoice_ocr.ocr import convert_to_image
 from PIL import Image
 import pytesseract
 from pytesseract import Output
@@ -12,6 +11,7 @@ import translators as ts
 import numpy
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import RegexpTokenizer
+from Invoice_ocr.ocr import image_processing
 
 from deep_translator import *
 custom_config = r"""Arabic
@@ -179,165 +179,85 @@ custom_config = r"""Arabic
 
 class Ocr:
 
-
     def __init__(self,source_document):
         self.source_document = source_document
 
-
-    def binarization(self,image):
-        kernel = numpy.ones((1, 1), numpy.uint8)
-        se=cv2.getStructuringElement(cv2.MORPH_RECT , (8,8))
-        bg=cv2.morphologyEx(image, cv2.MORPH_DILATE, se)
-        
-        
-        out_gray=cv2.divide(image, bg, scale=255)
-        out_binary=cv2.threshold(out_gray, 0, 255, cv2.THRESH_OTSU )[1] 
-        img = cv2.dilate(out_binary, kernel, iterations=1)
-        img = cv2.erode(img, kernel, iterations=1)
-        return img
-
-
-
-
-
-
-    def pre_process_image(self,image):
-        """This function will pre-process a image with: cv2 & deskew
-        so it can be process by tesseract"""
-
+    def convert_np_image(self,image):
         pil_image = image.convert('RGB') 
         open_cv_image = numpy.array(pil_image) 
         # image = np.full((300, 300, 3), 255).astype(np.uint8)
-
-        
         # Convert RGB to BGR 
         img = open_cv_image[:, :, ::-1].copy() 
+        return img
 
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) 
-        binarization = self.binarization(img)
-     
-        # cv2.imshow('custom window name', th)
-        # cv2.imshow(img)
+    def pre_process_image(self,image):
+        # image= self.convert_np_image(image)
+        gray = image_processing.get_grayscale(image)
+        thresh = image_processing.thresholding(gray)
+        noise_removal = image_processing.remove_noise(thresh)
+        opening = image_processing.opening(gray)
+        canny = image_processing.canny(gray)
+        erode = image_processing.erode(gray)
+        cv2.imwrite('test.jpg',thresh)
+        # cv2.waitKey(0)
+        return thresh
+
+    def osd(self,image):
+        print(pytesseract.image_to_osd(image))
+
+    def image_to_box(self,image,d,name):
+        n_boxes = len(d['text'])
+        for i in range(n_boxes):
+            if int(float(d['conf'][i])) > 60:
+                (x, y, w, h) = (d['left'][i], d['top'][i], d['width'][i], d['height'][i])
+                image = cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+        cv2.imwrite(name+'.jpg', image)
+
+      
+    def export_data(self,image,lang,):
+        d = pytesseract.image_to_data(image, output_type=Output.DICT)
+        return d
+           
+    def split_images(self,img):
+        h, w  = img.shape
+        half = w//2
+        left_part = img[:, :half] 
+        right_part = img[:, half:]  
+        half2 = h//2
+        top = img[:half2, :]
+        bottom = img[half2:, :]
+        cv2.imwrite("top.jpg",top)
+        cv2.imwrite("bottom.jpg",bottom)
+        return {"top":top,"bottom":bottom}
         
-        
-        # cv2.threshold(cv2.GaussianBlur(img, (5, 5), 0), 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-
-        # img = cv2.threshold(cv2.GaussianBlur(img, 5, 75, 75), 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-
-        # cv2.threshold(cv2.medianBlur(img, 3), 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-
-        # cv2.adaptiveThreshold(cv2.GaussianBlur(img, (5, 5), 0), 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 2)
-
-        # cv2.adaptiveThreshold(cv2.bilateralFilter(img, 9, 75, 75), 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 2)
-
-        # cv2.adaptiveThreshold(cv2.medianBlur(img, 3), 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 31, 2)
-        
-       
-        return binarization
-        
-
-    def split_images(self,lang):
-
-        images = convert_to_image.get_images(self.source_document)
-
-        for img in images:
-            # cv2.imread() -> takes an image as an input
-            pil_image = img.convert('RGB') 
-            open_cv_image = numpy.array(pil_image) 
-            # Convert RGB to BGR 
-            img = open_cv_image[:, :, ::-1].copy() 
-            h, w, channels = img.shape
-            
-            half = w//2
-            
-            
-            # this will be the first column
-            left_part = img[:, :half] 
-            
-            # [:,:half] means all the rows and
-            # all the columns upto index half
-            
-            # this will be the second column
-            right_part = img[:, half:]  
-            
-            # [:,half:] means al the rows and all
-            # the columns from index half to the end
-            # cv2.imshow is used for displaying the image
-
-            
-            # this is horizontal division
-            half2 = h//2
-            
-            top = img[:half2, :]
-            bottom = img[half2:, :]
-            print("TOP")
-            self.extract_text_new(self.binarization(top),lang)
-            print("BOTTOM")
-            self.extract_text_new(self.binarization(bottom),lang)
-            # print("LEFT")
-            # self.extract_text_new(left_part,lang)
-            # print("RIGHT")
-            # self.extract_text_new(right_part,lang)
-        
-        
-    def extract_easy_ocr(self,image):
-        import easyocr
-        reader = easyocr.Reader(['ch_sim','en']) # this needs to run only once to load the model into memory
-        result = reader.readtext(self.pre_process_image(image), gpu=False)
-        print(result)
-
-    def extract_text_new(self,img,lang):
-        # chinese_w_1
-        response = ""
-        
-
-        
-       
-        if lang == "":
-            text = pytesseract.image_to_string(img,config=custom_config)
-        else:
-            text = pytesseract.image_to_string(img,config=custom_config,lang=lang)
-
-        # print(d)
-
-        
-
-        response=response+text+"\n" 
-
-
-        # script_name, confidence = self.detect_image_lang(image)
-
-        # print(script_name,confidence)
-        
-        print(response)
-
     def extract_text(self,lang):
-        # chinese_w_1
         response = ""
+        full_response = ""
         images = convert_to_image.get_images(self.source_document)
-
         
-        for image in images:
-            self.extract_easy_ocr(image)
-            # thresh = self.pre_process_image(image)
-            thresh = image
-            
-            text = pytesseract.image_to_string(thresh,config=custom_config,lang=lang)
-            
+        
+        for i in range(len(images)):
 
-            # print(d)
+            border_removed_image = image_processing.remove_border_lines(image=self.convert_np_image(images[i]))
+            thresh = self.pre_process_image(border_removed_image)
+            thresh_one = self.pre_process_image(self.convert_np_image(images[i]))
+            # osd = self.osd(thresh)
+            split_image = self.split_images(thresh)
+            top_export_data = self.export_data(split_image["top"],lang=lang)
+            # top_boxed_image = self.image_to_box(split_image["top"],top_export_data,"top")
+            bottom_export_data = self.export_data(split_image["bottom"],lang=lang)
+            # bottom_boxed_image = self.image_to_box(split_image["bottom"],bottom_export_data,"bottom")
+            top_part = pytesseract.image_to_string(split_image["top"],lang=lang,config=custom_config)
+            bottom_part = pytesseract.image_to_string(split_image["bottom"],lang=lang,config=custom_config)
+            text = top_part+"\n"+bottom_part+"\n"     
+            full_text = pytesseract.image_to_string(thresh_one,lang=lang)
 
-            
-
+            full_response = full_response+text+"\n"
             response=response+text+"\n" 
        
-
-        # script_name, confidence = self.detect_image_lang(image)
-
-        # print(script_name,confidence)
         
-        return response
-
+        return {"res_one":full_response,"res_two":response}
 
     def detect_image_lang(self,img_path):
         try:
@@ -348,7 +268,6 @@ class Ocr:
         except:
             return None, 0.0
 
-
     def remove_empty_lines(self,txt):
         res=""
         l=[x for x in txt.splitlines() if x!=" " and x!="" and x != None ]
@@ -356,10 +275,12 @@ class Ocr:
             res=res+i+"\n"
         return res
 
-
     def split_lines(self,ntxt,lang):
-        txt = self.remove_empty_lines(ntxt)
-        txt = ts.google(txt,to_language='en')
+        full_txt = self.remove_empty_lines(ntxt["res_one"])
+        part_txt = self.remove_empty_lines(ntxt["res_two"])
+        full_txt = ts.google(full_txt,to_language='en')
+        part_txt = ts.google(part_txt,to_language='en')
+        txt = full_txt+"\n"+"EXTRACTION METHOD 2"+"\n"+part_txt
         # translated = MicrosoftTranslator(source='auto', target='de').translate(txt)
         # print(translated)
         res = []
@@ -380,3 +301,14 @@ class Ocr:
         return {"result":res , "words":words , "txt":txt}
         
 
+# Easy OCR
+    def extract_easy_ocr(self,image):
+        import easyocr
+        res = ""
+        reader = easyocr.Reader(['ch_tra','en']) # this needs to run only once to load the model into memory
+        result = reader.readtext(self.pre_process_image(image),detail = 0, paragraph=True)
+        for i in result:
+            res=res+i+"\n"
+
+        txt = ts.google(res,to_language='en')
+        print(txt)   

@@ -5,7 +5,7 @@ from tqdm import tqdm
 nlp = spacy.blank("en") # load a new spacy model
 db = DocBin() # create a DocBin object
 import json
-f = open('/home/diwahar/Work/aait_ocr/annotation/train/annotations.json')
+f = open('/media/diwahar/Storage/AAITPRO/aait_ocr/annotation/train/annotations.json')
 TRAIN_DATA = json.load(f)
 for text, annot in tqdm(TRAIN_DATA['annotations']): 
     doc = nlp.make_doc(text) 
