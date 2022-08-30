@@ -44,7 +44,7 @@ filtered_text_data = ocr.split_lines(extracted_text,launguage_code)
 
 predictor = Predictor(data=filtered_text_data)
 
-# predictor.get_trained_ents()
+print(predictor.get_trained_ents())
 # predictor.test_match()
 # print(extracted_text)
 

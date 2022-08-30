@@ -28,7 +28,7 @@ class Predictor:
         matches = self.matcher(doc)
 
     def get_trained_ents(self):
-        nlp = spacy.load("/home/dextern/aait_ocr/annotation/train/model-last")
+        nlp = spacy.load("/media/diwahar/Storage/AAITPRO/aait_ocr/annotation/train/model-best")
         data = dict()
         l = ["INVOICE_NUMBER","PURCHASE_ORDER","PRODUCT_LINE","INVOICE_DATE","VENDOR_NAME","VENDOR_ADDRESS","CUSTOMER_NUMBER","VAT_NUMBER","TOTAL","SUB_TOTAL","TAX","VENDOR_WEBSITE","VENDOR_MOBILE","VENDOR_EMAIL","CURRENCY","DESCRIPTION","END_DATE"]
         for i in l:

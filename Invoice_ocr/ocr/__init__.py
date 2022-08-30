@@ -190,6 +190,13 @@ class Ocr:
         img = open_cv_image[:, :, ::-1].copy() 
         return img
 
+    def crop_image(self,image):
+        h, w  = image.shape
+        cropped_image = image[348:248+h,359:359+w]
+        cv2.imwrite("crop.jpg",cropped_image)
+        
+        # return {"top":top,"bottom":bottom}
+
     def pre_process_image(self,image):
         # image= self.convert_np_image(image)
         gray = image_processing.get_grayscale(image)
@@ -230,7 +237,43 @@ class Ocr:
         cv2.imwrite("top.jpg",top)
         cv2.imwrite("bottom.jpg",bottom)
         return {"top":top,"bottom":bottom}
-        
+    
+    def click_event(event, x, y, flags, params):
+ 
+    # checking for left mouse clicks
+        if event == cv2.EVENT_LBUTTONDOWN:
+    
+            # displaying the coordinates
+            # on the Shell
+            print(x, ' ', y)
+    
+            # displaying the coordinates
+            # on the image window
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            cv2.putText(img, str(x) + ',' +
+                        str(y), (x,y), font,
+                        1, (255, 0, 0), 2)
+            cv2.imshow('image', img)
+    
+        # checking for right mouse clicks    
+        if event==cv2.EVENT_RBUTTONDOWN:
+    
+            # displaying the coordinates
+            # on the Shell
+            print(x, ' ', y)
+    
+            # displaying the coordinates
+            # on the image window
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            b = img[y, x, 0]
+            g = img[y, x, 1]
+            r = img[y, x, 2]
+            cv2.putText(img, str(b) + ',' +
+                        str(g) + ',' + str(r),
+                        (x,y), font, 1,
+                        (255, 255, 0), 2)
+            cv2.imshow('image', img)
+
     def extract_text(self,lang):
         response = ""
         full_response = ""
@@ -238,22 +281,27 @@ class Ocr:
         
         
         for i in range(len(images)):
-
+           
             border_removed_image = image_processing.remove_border_lines(image=self.convert_np_image(images[i]))
+           
+
             thresh = self.pre_process_image(border_removed_image)
+            # self.crop_image(thresh)
             thresh_one = self.pre_process_image(self.convert_np_image(images[i]))
+            
             # osd = self.osd(thresh)
             split_image = self.split_images(thresh)
-            top_export_data = self.export_data(split_image["top"],lang=lang)
+            # top_export_data = self.export_data(split_image["top"],lang=lang)
             # top_boxed_image = self.image_to_box(split_image["top"],top_export_data,"top")
-            bottom_export_data = self.export_data(split_image["bottom"],lang=lang)
+            # bottom_export_data = self.export_data(split_image["bottom"],lang=lang)
             # bottom_boxed_image = self.image_to_box(split_image["bottom"],bottom_export_data,"bottom")
             top_part = pytesseract.image_to_string(split_image["top"],lang=lang,config=custom_config)
+            
             bottom_part = pytesseract.image_to_string(split_image["bottom"],lang=lang,config=custom_config)
-            text = top_part+"\n"+bottom_part+"\n"     
+            text = top_part+"\n"+bottom_part+"\n"    
             full_text = pytesseract.image_to_string(thresh_one,lang=lang)
 
-            full_response = full_response+text+"\n"
+            full_response = full_response+full_text+"\n"
             response=response+text+"\n" 
        
         
