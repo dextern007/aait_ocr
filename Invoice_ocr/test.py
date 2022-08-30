@@ -45,7 +45,7 @@ def main():
                      in filename_list]
 
 if __name__ == '__main__':
-    a = send_pdf_data("ocr/8.pdf")
+    a = send_pdf_data("ocr/selected/5.pdf")
     b=json.loads(a)
 
-    print(b["extracted_text"]["txt"])
+    print(b)

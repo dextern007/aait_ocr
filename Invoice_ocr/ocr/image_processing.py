@@ -72,5 +72,5 @@ def remove_border_lines(image):
     for c in cnts:
         cv2.drawContours(result, [c], -1, (255,255,255), 5)
     # cv2.waitKey()
-
+    cv2.imwrite("result.jpg",result)
     return result
