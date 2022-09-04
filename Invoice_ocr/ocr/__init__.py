@@ -2,7 +2,7 @@
 from multiprocessing.connection import wait
 import re
 from time import sleep
-from Invoice_ocr.ocr import convert_to_image
+from Invoice.ocr import convert_to_image
 from PIL import Image
 import pytesseract
 from pytesseract import Output
@@ -12,7 +12,7 @@ import translators as ts
 import numpy
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import RegexpTokenizer
-from Invoice_ocr.ocr import image_processing
+from Invoice.ocr import image_processing
 
 # from deep_translator import *
 custom_config = r"""Arabic
@@ -471,16 +471,10 @@ class Ocr:
         return res
 
     def split_lines(self,ntxt,lang):
-        part_txt = self.remove_empty_lines(ntxt["res_two"]).splitlines()
+        part_txt = self.remove_empty_lines(ntxt["res_two"])
         # print(part_txt)
-        txt  = ""
-        for line in part_txt:
-            try:
-                res = ts.google(line,to_language='en')
-                txt = txt+res+"\n"
-            except:
-                pass
-
+        txt  = ts.google(part_txt,to_language='en')
+        
         # txt = part_txt
         # translated = MicrosoftTranslator(source='auto', target='de').translate(txt)
         # print(translated)
