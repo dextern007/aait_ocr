@@ -3,7 +3,7 @@ import numpy as np
 def remove_border_lines(image):
     result = image.copy()
     gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
-    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+    thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY+ cv2.THRESH_OTSU)[1]
 
     # Remove horizontal lines
     horizontal_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (40,1))
@@ -24,7 +24,7 @@ def remove_border_lines(image):
     cv2.imwrite("result.jpg",result)
     return result
 
-remove_border_lines(cv2.imread("6pdf/1.jpg"))
+remove_border_lines(cv2.imread("0.jpg"))
 
 flag = False
 ix = -1
@@ -66,7 +66,6 @@ while True:
         break
 
 cv2.destroyAllWindows()
-
 
 positions = [
 [219, 333, 10, 1027],
@@ -132,9 +131,8 @@ positions = [
 [1490, 1713, 910, 1214],
 
 #bottom
+
 [1241, 1445, 582, 1223],
 [1372, 1574, 909, 1251],
 [1392, 1549, 30, 777],
-
-
 ]

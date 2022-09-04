@@ -27,11 +27,9 @@
       "PURCHASE_ORDER",
       "TOTAL",
       "VAT_NUMBER",
-      "VENDOR_ADDRESS",
       "VENDOR_EMAIL",
       "VENDOR_MOBILE",
-      "VENDOR_NAME",
-      "VENDOR_WEBSITE"
+      "VENDOR_NAME"
     ]
   },
   "pipeline":[
@@ -46,67 +44,57 @@
 
   ],
   "performance":{
-    "ents_f":0.9174311927,
-    "ents_p":0.8928571429,
-    "ents_r":0.9433962264,
+    "ents_f":0.9411764706,
+    "ents_p":0.9523809524,
+    "ents_r":0.9302325581,
     "ents_per_type":{
       "VENDOR_NAME":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       },
-      "INVOICE_NUMBER":{
-        "p":0.9230769231,
+      "VENDOR_MOBILE":{
+        "p":0.8571428571,
         "r":1.0,
-        "f":0.96
+        "f":0.9230769231
       },
-      "INVOICE_DATE":{
-        "p":0.875,
-        "r":1.0,
-        "f":0.9333333333
-      },
-      "PURCHASE_ORDER":{
+      "VENDOR_EMAIL":{
         "p":1.0,
-        "r":0.75,
-        "f":0.8571428571
+        "r":1.0,
+        "f":1.0
+      },
+      "VAT_NUMBER":{
+        "p":0.8333333333,
+        "r":1.0,
+        "f":0.9090909091
       },
       "CURRENCY":{
-        "p":0.6666666667,
+        "p":1.0,
         "r":1.0,
-        "f":0.8
+        "f":1.0
       },
       "TOTAL":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       },
-      "VENDOR_ADDRESS":{
-        "p":0.75,
-        "r":0.75,
-        "f":0.75
+      "INVOICE_NUMBER":{
+        "p":1.0,
+        "r":0.8571428571,
+        "f":0.9230769231
       },
-      "VENDOR_EMAIL":{
-        "p":0.6666666667,
+      "INVOICE_DATE":{
+        "p":1.0,
         "r":0.6666666667,
-        "f":0.6666666667
-      },
-      "VENDOR_MOBILE":{
-        "p":1.0,
-        "r":1.0,
-        "f":1.0
-      },
-      "VENDOR_WEBSITE":{
-        "p":1.0,
-        "r":1.0,
-        "f":1.0
-      },
-      "VAT_NUMBER":{
-        "p":0.6666666667,
-        "r":1.0,
         "f":0.8
+      },
+      "PURCHASE_ORDER":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
       }
     },
-    "tok2vec_loss":46.8325751977,
-    "ner_loss":343.4317802698
+    "tok2vec_loss":48.6748355978,
+    "ner_loss":239.6990502229
   }
 }
