@@ -28,9 +28,11 @@ class Predictor:
         matches = self.matcher(doc)
 
     def get_trained_ents(self):
-        nlp = spacy.load("/media/diwahar/Storage/AAITPRO/aait_ocr/annotation/train/model-best")
+        nlp = spacy.load("/home/dextern/aait_ocr/annotation/train/model-best")
+        # nlp = spacy.load("en")
         data = dict()
-        l = ["INVOICE_NUMBER","PURCHASE_ORDER","PRODUCT_LINE","INVOICE_DATE","VENDOR_NAME","VENDOR_ADDRESS","CUSTOMER_NUMBER","VAT_NUMBER","TOTAL","SUB_TOTAL","TAX","VENDOR_WEBSITE","VENDOR_MOBILE","VENDOR_EMAIL","CURRENCY","DESCRIPTION","END_DATE"]
+        l=["INVOICE_NUMBER","PURCHASE_ORDER","PRODUCT_LINE","INVOICE_DATE","VENDOR_NAME","VENDOR_ADDRESS","CUSTOMER_NUMBER","VAT_NUMBER","TOTAL","SUB_TOTAL","TAX","VENDOR_WEBSITE","VENDOR_MOBILE","VENDOR_EMAIL","CURRENCY","DESCRIPTION","END_DATE","IBAN","TAXID","SHIPPMENT_NUMBER","CURRENCY_RATE","ACCOUNT_NUMBER","BANK_NAME","JOB_NO","DUE_DATE"]
+        # l = ["INVOICE_NUMBER","PURCHASE_ORDER","PRODUCT_LINE","INVOICE_DATE","VENDOR_NAME","VENDOR_ADDRESS","CUSTOMER_NUMBER","VAT_NUMBER","TOTAL","SUB_TOTAL","TAX","VENDOR_WEBSITE","VENDOR_MOBILE","VENDOR_EMAIL","CURRENCY","DESCRIPTION","END_DATE"]
         for i in l:
             data[i] = ""
         doc = nlp(self.data["txt"])

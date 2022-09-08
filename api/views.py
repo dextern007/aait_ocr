@@ -95,6 +95,8 @@ from PIL import Image
 import pytesseract
 import numpy
 from django import forms
+from Invoice_ocr.ocr import image_processing
+import cv2 
 def convert_np_image(image):
         pil_image = image.convert('RGB') 
         open_cv_image = numpy.array(pil_image) 
@@ -109,9 +111,36 @@ class ImageForm(forms.ModelForm):
         model = UImage
         fields = "__all__"
 
+def pre_process_image(image):
+        # image= self.convert_np_image(image)
+        gray = image_processing.get_grayscale(image)
+        thresh = image_processing.thresholding(gray)
+        noise_removal = image_processing.remove_noise(thresh)
+        opening = image_processing.opening(gray)
+        canny = image_processing.canny(gray)
+        erode = image_processing.erode(gray)
+        # cv2.imwrite('test.jpg',thresh)
+        # cv2.waitKey(0)
+        return thresh
+
+import translators as ts
+def pre_process_image(image):
+    # image= self.convert_np_image(image)
+    gray = image_processing.get_grayscale(image)
+    thresh = image_processing.thresholding(gray)
+    noise_removal = image_processing.remove_noise(thresh)
+    opening = image_processing.opening(gray)
+    canny = image_processing.canny(gray)
+    erode = image_processing.erode(gray)
+    # cv2.imwrite('test.jpg',thresh)
+    # cv2.waitKey(0)
+    return thresh
+
 
 class CropperOCR(APIView):
+
     def post(self,request,format=None):
+        # import easyocr
         form = ImageForm(request.POST or None ,request.FILES or None)
         if form.is_valid():
             instance = form.save()
@@ -120,8 +149,8 @@ class CropperOCR(APIView):
         else :
             print(form.errors)
 
-        text = pytesseract.image_to_string(Image.open(path),lang="chi_sim")
+        text = pytesseract.image_to_string(pre_process_image(convert_np_image(Image.open(path))),lang=request.data["lang"]+"+eng")
         # print(text)
-        # image = convert_np_image(request.FILES["croppedImage"])
-        # text = pytesseract.image_to_string(image)
+        # text  = ts.google(text,to_language='en')
+
         return Response({"response":text})

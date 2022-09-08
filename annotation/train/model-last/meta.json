@@ -21,15 +21,27 @@
 
     ],
     "ner":[
+      "ACCOUNT_NUMBER",
+      "BANK_NAME",
       "CURRENCY",
+      "CURRENCY_RATE",
+      "CUSTOMER_NUMBER",
+      "IBAN",
       "INVOICE_DATE",
       "INVOICE_NUMBER",
+      "JOB_NO",
       "PURCHASE_ORDER",
+      "SHIPPMENT_NUMBER",
+      "SUB_TOTAL",
+      "TAX",
+      "TAXID",
       "TOTAL",
       "VAT_NUMBER",
+      "VENDOR_ADDRESS",
       "VENDOR_EMAIL",
       "VENDOR_MOBILE",
-      "VENDOR_NAME"
+      "VENDOR_NAME",
+      "VENDOR_WEBSITE"
     ]
   },
   "pipeline":[
@@ -44,31 +56,46 @@
 
   ],
   "performance":{
-    "ents_f":0.9397590361,
-    "ents_p":0.975,
-    "ents_r":0.9069767442,
+    "ents_f":1.0,
+    "ents_p":1.0,
+    "ents_r":1.0,
     "ents_per_type":{
+      "INVOICE_NUMBER":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "TAXID":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "IBAN":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "INVOICE_DATE":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
       "VENDOR_NAME":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       },
-      "VENDOR_MOBILE":{
-        "p":0.8571428571,
-        "r":1.0,
-        "f":0.9230769231
-      },
-      "VENDOR_EMAIL":{
+      "VENDOR_ADDRESS":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       },
-      "VAT_NUMBER":{
+      "SUB_TOTAL":{
         "p":1.0,
-        "r":0.8,
-        "f":0.8888888889
+        "r":1.0,
+        "f":1.0
       },
-      "CURRENCY":{
+      "TAX":{
         "p":1.0,
         "r":1.0,
         "f":1.0
@@ -78,23 +105,68 @@
         "r":1.0,
         "f":1.0
       },
-      "INVOICE_NUMBER":{
+      "VENDOR_MOBILE":{
         "p":1.0,
-        "r":0.8571428571,
-        "f":0.9230769231
+        "r":1.0,
+        "f":1.0
       },
-      "INVOICE_DATE":{
+      "VENDOR_EMAIL":{
         "p":1.0,
-        "r":0.6666666667,
-        "f":0.8
+        "r":1.0,
+        "f":1.0
+      },
+      "VAT_NUMBER":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "CURRENCY":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "CURRENCY_RATE":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "SHIPPMENT_NUMBER":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
       },
       "PURCHASE_ORDER":{
         "p":1.0,
         "r":1.0,
         "f":1.0
+      },
+      "ACCOUNT_NUMBER":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "BANK_NAME":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "CUSTOMER_NUMBER":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "JOB_NO":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
+      },
+      "VENDOR_WEBSITE":{
+        "p":1.0,
+        "r":1.0,
+        "f":1.0
       }
     },
-    "tok2vec_loss":44.6176067387,
-    "ner_loss":192.9608498326
+    "tok2vec_loss":0.001076908,
+    "ner_loss":0.0005801583
   }
 }

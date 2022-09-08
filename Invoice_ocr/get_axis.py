@@ -1,5 +1,9 @@
 import cv2
 import numpy as np
+import pytesseract
+import translators as ts
+
+
 def remove_border_lines(image):
     result = image.copy()
     gray = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
@@ -51,6 +55,10 @@ def crop(event,x,y,flags,params):
         cropped = img[iy:fy,ix:fx]
         print([iy,fy,ix,fx])
         cv2.imwrite("cropped.png",cropped)
+        extraction = pytesseract.image_to_string(cropped,lang="chi_sim+eng")
+        print(extraction)
+        txt  = ts.bing(extraction,to_language='en')
+        print(txt)
         # print(l)
 
 

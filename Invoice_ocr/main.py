@@ -12,30 +12,30 @@ from predictor import Predictor
 import os
 
 
-pdf_path = str(input("Enter the PDF Path : "))
-lang =  input("Choose OCR Launguage :")
-#  = invoice_reader.get_text(pdf_path)
-ocr                = Ocr(source_document=pdf_path)
-extracted_text     = ocr.extract_text(lang=lang)
+# pdf_path = str(input("Enter the PDF Path : "))
+# lang =  input("Choose OCR Launguage :")
+# #  = invoice_reader.get_text(pdf_path)
+# ocr                = Ocr(source_document=pdf_path)
+# extracted_text     = ocr.extract_text(lang=lang)
 
-launguage_code     = deduct_launguage.get_launguage_code(extracted_text)
-filtered_text_data = ocr.split_lines(extracted_text,launguage_code)
+# launguage_code     = deduct_launguage.get_launguage_code(extracted_text)
+# filtered_text_data = ocr.split_lines(extracted_text,launguage_code)
 # print(filtered_text_data["txt"])
 
-# import glob, os
-# os.chdir("ocr/selected")
-# response =""
-# fo = open("annotation2.txt", "w+")
-# for file in glob.glob("*.pdf"):
-#     # print(file)
-#     ocr                = Ocr(source_document=file)
-#     extracted_text     = ocr.extract_text(lang="chi_sim")
-#     launguage_code     = deduct_launguage.get_launguage_code(extracted_text)
-#     filtered_text_data = ocr.split_lines(extracted_text,launguage_code)
-#     txt=filtered_text_data["txt"]
-#     response = response+txt+"\n"+"---"+"\n"
+import glob, os
+os.chdir("ocr/selected")
+response =""
+fo = open("annon.txt", "w+")
+for file in glob.glob("*.pdf"):
+    print(file)
+    ocr                = Ocr(source_document=file)
+    extracted_text     = ocr.extract_text(lang="eng+eng")
+    launguage_code     = deduct_launguage.get_launguage_code(extracted_text)
+    filtered_text_data = ocr.split_lines(extracted_text,launguage_code)
+    txt=filtered_text_data["txt"]
+    response = response+txt+"\n"+"---"+"\n"
 
-# fo.write(response)
+fo.write(response)
 
 
 
@@ -45,9 +45,9 @@ filtered_text_data = ocr.split_lines(extracted_text,launguage_code)
 # new_extrction = ocr.split_images(lang)
 # print(filtered_text_data)
 
-predictor = Predictor(data=filtered_text_data)
+# predictor = Predictor(data=filtered_text_data)
 
-print(predictor.get_trained_ents())
+# print(predictor.get_trained_ents())
 # predictor.test_match()
 # print(extracted_text)
 

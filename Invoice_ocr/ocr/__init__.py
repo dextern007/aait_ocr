@@ -2,7 +2,7 @@
 from multiprocessing.connection import wait
 import re
 from time import sleep
-from Invoice.ocr import convert_to_image
+from Invoice_ocr.ocr import convert_to_image
 from PIL import Image
 import pytesseract
 from pytesseract import Output
@@ -12,7 +12,7 @@ import translators as ts
 import numpy
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import RegexpTokenizer
-from Invoice.ocr import image_processing
+from Invoice_ocr.ocr import image_processing
 
 # from deep_translator import *
 custom_config = r"""Arabic
@@ -180,7 +180,6 @@ custom_config = r"""Arabic
 
 
 templates = {
-
     #chinese handwritten
     "one":[
         [228, 312, 281, 1033],
@@ -407,33 +406,34 @@ class Ocr:
         response = ""
         full_response = ""
         images = convert_to_image.get_images(self.source_document)
+        # thresh_one = self.pre_process_image(self.convert_np_image(images[-1]))
         
-        
+
         for i in range(len(images)):
-           
-            border_removed_image = self.convert_np_image(images[i])
+            thresh_one = self.pre_process_image(self.convert_np_image(images[i]))
+            # border_removed_image = self.convert_np_image(images[i])
             # border_removed_image = image_processing.remove_border_lines(image=self.convert_np_image(images[i]))
-            thresh = self.pre_process_image(border_removed_image)
-            # print(self.detect_image_lang(thresh))
+            # thresh = self.pre_process_image(border_removed_image)
+            # # print(self.detect_image_lang(thresh))
             # cv2.imwrite(str(i)+".jpg", thresh)
-           
-            for ax in positions:
+            full_text = pytesseract.image_to_string(thresh_one,lang=lang)
+            # for ax in positions:
                 
-                try:
-                    # cv2.imwrite("crop.jpg",thresh[ax[0]:ax[1],ax[2]:ax[3]])
-                    extraction = pytesseract.image_to_string(thresh[ax[0]:ax[1],ax[2]:ax[3]],lang=lang,config=custom_config)
-                    response = response+extraction+"\n"
+            #     try:
+            #         # cv2.imwrite("crop.jpg",thresh[ax[0]:ax[1],ax[2]:ax[3]])
+            #         extraction = pytesseract.image_to_string(thresh[ax[0]:ax[1],ax[2]:ax[3]],lang=lang,config=custom_config)
+            #         response = response+extraction+"\n"
                     
-                    # sleep(1)
-                except:
-                    pass
+            #         # sleep(1)
+            #     except:
+            #         pass
             
             
            
                 
            
             # self.crop_image(thresh)
-            # thresh_one = self.pre_process_image(self.convert_np_image(images[i]))
+            # thresh_one = self.pre_process_image(self.convert_np_image(images[-1]))
             
             # osd = self.osd(thresh)
             # split_image = self.split_images(thresh)
@@ -448,7 +448,7 @@ class Ocr:
             # full_text = pytesseract.image_to_string(thresh_one,lang=lang)
 
             # full_response = full_response+full_text+"\n"
-            # response=response+text+"\n" 
+            response=response+full_text+"\n" 
        
        
         return {"res_two":response}
@@ -473,7 +473,10 @@ class Ocr:
     def split_lines(self,ntxt,lang):
         part_txt = self.remove_empty_lines(ntxt["res_two"])
         # print(part_txt)
-        txt  = ts.google(part_txt,to_language='en')
+        try:
+            txt  = ts.google(part_txt,to_language='en')
+        except:
+            txt = part_txt
         
         # txt = part_txt
         # translated = MicrosoftTranslator(source='auto', target='de').translate(txt)

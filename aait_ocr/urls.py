@@ -17,10 +17,13 @@ from django.contrib import admin
 from django.urls import path
 from api import views
 from . import views as template_view
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('invoice-ocr/', views.OCRView.as_view()),
-    path('cropper/', template_view.predictImage,name="cropper"),
+    path('cropper/<int:pk>', template_view.predictImage,name="cropper"),
+    path('upload-pdf/', template_view.UploadPDF,name="upload"),
     path('cropper/ocr/', views.CropperOCR.as_view()),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
