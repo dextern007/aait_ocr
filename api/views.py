@@ -149,8 +149,8 @@ class CropperOCR(APIView):
         else :
             print(form.errors)
 
-        text = pytesseract.image_to_string(pre_process_image(convert_np_image(Image.open(path))),lang=request.data["lang"]+"+eng")
+        text = pytesseract.image_to_string(pre_process_image(convert_np_image(Image.open(path))),lang=request.data["lang"]+"+eng",config="--psm 6")
         # print(text)
-        # text  = ts.google(text,to_language='en')
+        text  = ts.google(text,to_language='en')
 
         return Response({"response":text})

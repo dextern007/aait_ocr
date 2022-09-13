@@ -21,6 +21,7 @@ def predictImage(request,pk):
     predictor = Predictor(data=filtered_text_data)
     out= predictor.get_trained_ents()
     # print(out)
+    predictor.ProductLines()
 
     pdf = PDF.objects.get(pk=pk)
     if request.method == "POST":

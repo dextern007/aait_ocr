@@ -338,6 +338,7 @@ bottom = [
    
 ]
 
+
 class Ocr:
 
     def __init__(self,source_document):
@@ -416,7 +417,9 @@ class Ocr:
             # thresh = self.pre_process_image(border_removed_image)
             # # print(self.detect_image_lang(thresh))
             # cv2.imwrite(str(i)+".jpg", thresh)
-            full_text = pytesseract.image_to_string(thresh_one,lang=lang)
+            full_text = pytesseract.image_to_string(thresh_one,lang=lang,config="--psm 6")
+            # print(full_text)
+            # print(pytesseract.image_to_string(thresh_one,lang=lang,config="--psm 4"))
             # for ax in positions:
                 
             #     try:
@@ -427,10 +430,7 @@ class Ocr:
             #         # sleep(1)
             #     except:
             #         pass
-            
-            
-           
-                
+
            
             # self.crop_image(thresh)
             # thresh_one = self.pre_process_image(self.convert_np_image(images[-1]))

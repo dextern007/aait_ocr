@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.11/cropper.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <style>
 
   /* Style the tab */
@@ -43,8 +46,9 @@
   padding: 6px 12px;
  /* border: 1px solid #ccc;*/
   border-top: none;
-      height: 84vh;
-    overflow-y: scroll;
+  width: 33vw;
+  height: 84vh;
+  overflow-y: scroll;
 }
 .line-1{border-bottom: 1.5px solid #ccc;padding: 0.8rem 0;}
 .icon-cross, .icon-cross:hover{
@@ -68,11 +72,25 @@
   position: absolute;
     bottom: 3rem;
     /*right: 0;*/
-    width: 25%; box-shadow: 0px 0px 10px #918e8e85;}
+    width: 25%; 
+    /* box-shadow: 0px 0px 10px #918e8e85; */
+  }
+
+
+  .do-ocr-text-float{
+  position: absolute;
+    bottom: 7rem;
+    /*right: 0;*/
+    width: 25%; 
+    /* box-shadow: 0px 0px 10px #918e8e85; */
+  }
     .box-container{
 background: #ccc;
-    display: flex;
-    justify-content: center;
+    /* display: flex;
+    justify-content: center; */
+    position: fixed;
+    overflow-y: scroll;
+    height: 100vh;
     padding: 1rem;
     }
 </style>
@@ -92,7 +110,9 @@ background: #ccc;
   <div class="row">
     <div class="col-sm-8 p-3">
       <div class="box-container">
-        Center align item
+        <div style="height:3000px; width:60vw;">
+          <img id="blah"  alt="your image" src="{{ pdf.image.url }}" onload="initCropper();" />
+        </div>
       </div>
     </div>
     <div class="col-sm-4 p-0 border">
@@ -101,8 +121,8 @@ background: #ccc;
         <button class="tablinks" onclick="openCity(event, 'headers')" id="defaultOpen">Headers</button>
         <button class="tablinks" onclick="openCity(event, 'productlines')">Product Lines</button>
       </div>
-
-      <div id="headers" class="tabcontent">
+ 
+      <div id="headers" class="tabcontent ">
         <form action="#">
 
           <div class="row line-1">
@@ -262,13 +282,15 @@ background: #ccc;
               </div>
             </div>
           </div>
-
+          <div style="height:15rem" ></div>
         </form>
 
-        <div class="do-ocr-align">
-      <div class="pb-2 pt-2 bg-success text-center do-ocr-float">
-        <a class=" do-ocr text-white" href="#">DO OCR</a>
-      </div>
+        <div class="do-ocr-align ">
+          <textarea class="do-ocr-text-float" ></textarea>
+              <div class="pb-2 pt-2 bg-success text-center do-ocr-float">
+        
+              <a class=" do-ocr text-white" href="#">DO OCR</a>
+           </div>
       </div>
       </div>
 
@@ -291,7 +313,13 @@ background: #ccc;
           </div>
         </form>
       </div>
-
+      <div class="do-ocr-align ">
+        <textarea class="do-ocr-text-float" ></textarea>
+            <div class="pb-2 pt-2 bg-success text-center do-ocr-float">
+      
+            <a class=" do-ocr text-white" href="#">DO OCR</a>
+         </div>
+    </div>
       
 
     </div>
@@ -300,6 +328,62 @@ background: #ccc;
 </div>
 
 
+</body>
+
+<script type="text/javascript" defer>
+  function readURL(input) {
+      if (input.files && input.files[0]) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+              $('#blah').attr('src', e.target.result)
+          };
+          reader.readAsDataURL(input.files[0]);
+          setTimeout(initCropper, 1000);
+      }
+  }
+  function initCropper(){
+      var image = document.getElementById('blah');
+      var cropper = new Cropper(image, {
+        aspectRatio: NaN,
+        crop: function(e) {
+          console.log(e.detail.x);
+          console.log(e.detail.y);
+        }
+      });
+
+      // On crop button clicked
+      document.getElementById('crop_button').addEventListener('click', function(){
+          var imgurl =  cropper.getCroppedCanvas().toDataURL();
+          var img = document.createElement("img");
+          img.src = imgurl;
+          document.getElementById("cropped_result").appendChild(img);
+
+       
+
+              cropper.getCroppedCanvas().toBlob(function (blob) {
+                    var formData = new FormData();
+                    formData.append("lang","{{ pdf.launguage }}");
+                    formData.append('croppedImage', blob,'file.jpg');
+                    // Use `jQuery.ajax` method
+                    $.ajax('ocr/', {
+                      method: "POST",
+                      data: formData,
+                      processData: false,
+                      contentType: false,
+                      success: function (result) {
+                          const res = document.getElementById("selection");
+                          res.innerHTML = res.innerHTML + '<div id="data" class="row gx-2"><div class="col-md-6"><input class="form-control" name="label" aria-describedby="Lav=bel" placeholder="Label"></div><div class="col-md-6"><textarea class="form-control">'+result.response+'</textarea> </div></div>';
+                        
+                      },
+                      error: function () {
+                        console.log('Upload error');
+                      }
+                    });
+              },'image/jpg', 0.9);
+
+      })
+  }
+</script>
 </body>
 
 <script>
@@ -322,3 +406,5 @@ document.getElementById("defaultOpen").click();
 </script>
 
 </html>
+
+
