@@ -106,10 +106,10 @@ def get_line_items(lines):
             list_difference = [item for item in blob.words.lower() if item in keywords]
             # print(list_difference)
             if len(list_difference)==0:
-                nlp = spacy.load("/media/diwahar/Storage/AAITPRO/aait_ocr/annotation/product_line/model-last")
-                doc=nlp(l)
-                for ent in doc.ents:
-                    print(ent.label_)
+                # nlp = spacy.load("/media/diwahar/Storage/AAITPRO/aait_ocr/annotation/product_line/model-last")
+                # doc=nlp(l)
+                # for ent in doc.ents:
+                #     print(ent.label_)
                 res.append(l)
                 # print(blob)
             else:

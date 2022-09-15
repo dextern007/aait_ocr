@@ -21,21 +21,13 @@
 
     ],
     "ner":[
-      "CURRENCY",
-      "CUSTOMER_NAME",
-      "DUE_DATE",
-      "INVOICE_DATE",
-      "INVOICE_NUMBER",
-      "PO_NUMBER",
-      "SUB_TOTAL",
-      "TAX_TOTAL",
-      "TOTAL",
-      "VAT_NUMBER",
-      "VENDOR_ADDRESS",
-      "VENDOR_EMAIL",
-      "VENDOR_MOBILE",
-      "VENDOR_NAME",
-      "VENDOR_WEBSITE"
+      "DESCRIPTION",
+      "LINE",
+      "PARTICLE_NUMBER",
+      "QUANTITY",
+      "TOTAL_AMOUNT",
+      "UNIT_PRICE",
+      "UOM"
     ]
   },
   "pipeline":[
@@ -50,87 +42,47 @@
 
   ],
   "performance":{
-    "ents_f":0.9784791966,
-    "ents_p":0.9742857143,
-    "ents_r":0.9827089337,
+    "ents_f":0.9980952381,
+    "ents_p":0.9980952381,
+    "ents_r":0.9980952381,
     "ents_per_type":{
-      "INVOICE_NUMBER":{
-        "p":0.9714285714,
-        "r":1.0,
-        "f":0.9855072464
-      },
-      "INVOICE_DATE":{
-        "p":1.0,
-        "r":0.9555555556,
-        "f":0.9772727273
-      },
-      "VENDOR_NAME":{
-        "p":0.9722222222,
-        "r":1.0,
-        "f":0.985915493
-      },
-      "CUSTOMER_NAME":{
+      "LINE":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       },
-      "VENDOR_ADDRESS":{
-        "p":0.96,
-        "r":0.96,
-        "f":0.96
-      },
-      "SUB_TOTAL":{
+      "DESCRIPTION":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       },
-      "TAX_TOTAL":{
+      "QUANTITY":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       },
-      "TOTAL":{
-        "p":1.0,
-        "r":0.9487179487,
-        "f":0.9736842105
-      },
-      "VENDOR_WEBSITE":{
+      "UNIT_PRICE":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       },
-      "PO_NUMBER":{
-        "p":0.9444444444,
+      "TOTAL_AMOUNT":{
+        "p":0.9908256881,
         "r":1.0,
-        "f":0.9714285714
+        "f":0.9953917051
       },
-      "CURRENCY":{
+      "PARTICLE_NUMBER":{
         "p":1.0,
         "r":1.0,
         "f":1.0
       },
-      "VENDOR_MOBILE":{
-        "p":0.88,
-        "r":0.9565217391,
-        "f":0.9166666667
-      },
-      "VAT_NUMBER":{
-        "p":0.9,
-        "r":1.0,
-        "f":0.9473684211
-      },
-      "VENDOR_EMAIL":{
+      "UOM":{
         "p":1.0,
-        "r":1.0,
-        "f":1.0
-      },
-      "DUE_DATE":{
-        "p":0.9473684211,
-        "r":1.0,
-        "f":0.972972973
+        "r":0.9772727273,
+        "f":0.9885057471
       }
     },
-    "tok2vec_loss":658.0237344112,
-    "ner_loss":262.7423771862
+    "tok2vec_loss":648.8046176637,
+    "ner_loss":206.9171327556
   }
 }

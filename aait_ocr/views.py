@@ -14,7 +14,7 @@ def predictImage(request,pk):
     text =""
     from Invoice_ocr.ocr import Ocr
     pdf =PDF.objects.get(pk=pk)
-    ocr =Ocr(source_document=pdf.document.path)
+    ocr =Ocr(source_document=pdf.document.path,read_type="path")
     extracted_text=ocr.extract_text(lang=pdf.launguage+"+eng")
     launguage_code     = deduct_launguage.get_launguage_code(extracted_text)
     filtered_text_data = ocr.split_lines(extracted_text,launguage_code)
@@ -24,6 +24,7 @@ def predictImage(request,pk):
     
     line_items=test.get_line_items(extracted_text["res_two"])
     line_items=predictor.ProductLines(line_items)
+    out["line_items"]=line_items
     # print(extracted_text)
 
     pdf = PDF.objects.get(pk=pk)
@@ -32,10 +33,10 @@ def predictImage(request,pk):
         fileObj = request.FILES['cropped_result']
         text = pytesseract.image_to_string(convert_np_image(fileObj))
 
-    for i, j in out.items():
-        print(i, " : ", j)
-    for i in line_items:
-        print(i)
+    # for i, j in out.items():
+    #     print(i, " : ", j)
+    # for i in line_items:
+    #     print(i)
         
         
     return render(request, 'cropper.html',{"k":text,"pdf":pdf,"out":out})

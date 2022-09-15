@@ -4,15 +4,14 @@ from spacy.tokens import DocBin
 from tqdm import tqdm
 
 nlp = spacy.blank("en") 
-nlp.add_pipe("ner", name="line_items")
-nlp.to_disk("line_items")
+
 
 #Add our two labels
 
 # load a new spacy model
 db = DocBin() # create a DocBin object
 import json
-f = open('/media/diwahar/Storage/AAITPRO/aait_ocr/annotation/train/annotations.json')
+f = open('/media/diwahar/Storage/AAITPRO/aait_ocr/annotation/product_line/annotations.json')
 TRAIN_DATA = json.load(f)
 for text, annot in tqdm(TRAIN_DATA['annotations']): 
     doc = nlp.make_doc(text) 

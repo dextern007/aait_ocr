@@ -341,8 +341,9 @@ bottom = [
 
 class Ocr:
 
-    def __init__(self,source_document):
+    def __init__(self,source_document,read_type):
         self.source_document = source_document
+        self.read_type = read_type
 
     def convert_np_image(self,image):
         pil_image = image.convert('RGB') 
@@ -406,7 +407,7 @@ class Ocr:
         l=[]
         response = ""
         full_response = ""
-        images = convert_to_image.get_images(self.source_document)
+        images = convert_to_image.get_images(self.source_document,self.read_type)
         # thresh_one = self.pre_process_image(self.convert_np_image(images[-1]))
         
 
