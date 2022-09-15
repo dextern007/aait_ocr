@@ -31,7 +31,39 @@ class Predictor:
         nlp = spacy.load("/media/diwahar/Storage/AAITPRO/aait_ocr/annotation/train/model-best")
         # nlp = spacy.load("en")
         data = dict()
-        l=["INVOICE_NUMBER","PURCHASE_ORDER","PRODUCT_LINE","INVOICE_DATE","VENDOR_NAME","VENDOR_ADDRESS","CUSTOMER_NUMBER","VAT_NUMBER","TOTAL","SUB_TOTAL","TAX","VENDOR_WEBSITE","VENDOR_MOBILE","VENDOR_EMAIL","CURRENCY","DESCRIPTION","END_DATE","IBAN","TAXID","SHIPPMENT_NUMBER","CURRENCY_RATE","ACCOUNT_NUMBER","BANK_NAME","JOB_NO","DUE_DATE"]
+        l=[
+        "CUSTOMER_NAME", #Required
+        "VENDOR_NAME", #Required
+        "INVOICE_NUMBER", #Required
+        "INVOICE_DATE", #Required
+        "DUE_DATE",
+        "PO_NUMBER", #Required
+
+        "SUB_TOTAL", #Required
+        "TAX_AMOUNT", 
+        "TOTAL_AMOUNT", #Required
+        "CURRENCY", #Required
+        "VAT_NUMBER",
+
+        # "CURRENCY_RATE",
+
+        # "VENDOR_ADDRESS",
+        # "VENDOR_WEBSITE",
+        # "VENDOR_MOBILE",
+        # "VENDOR_EMAIL",
+        
+        
+       
+       
+        
+        
+
+        
+
+        ]
+
+
+        
         # l = ["INVOICE_NUMBER","PURCHASE_ORDER","PRODUCT_LINE","INVOICE_DATE","VENDOR_NAME","VENDOR_ADDRESS","CUSTOMER_NUMBER","VAT_NUMBER","TOTAL","SUB_TOTAL","TAX","VENDOR_WEBSITE","VENDOR_MOBILE","VENDOR_EMAIL","CURRENCY","DESCRIPTION","END_DATE"]
         for i in l:
             data[i] = ""
@@ -116,27 +148,36 @@ class Predictor:
         return res
 
 
-    def ProductLines(self):
+    def ProductLines(self,lines):
+       
+        product_lines = [
+            "LINE", 
+            "PARTICLE_NUMBER", # UNIQUE ONE
+            # "PO_NUMBER",
+            "DESCRIPTION", #Required
+            "QUANTITY",
+            "UOM",
+            "UNIT_PRICE",
+            "TOTAL_AMOUNT", #Required
+        ]
+        
         res = []
-        lines = self.data["result"]
-        for line in lines:
-            try:
-                doc = self.nlp(line["tokenized_line"][-1])
+        nlp = spacy.load("/media/diwahar/Storage/AAITPRO/aait_ocr/annotation/product_line/model-best")
+        
+        for i in lines:
+            # print(i)
+            data = dict()
+            for j in product_lines:
+                data[j] = ""
+            doc = nlp(i)
+            # print(i)
+            for ent in doc.ents:
+                
+                data[ent.label_] = ent.text
 
-                for ent in doc.ents:
-                    if ent.label_ == "MONEY":
-                        res.append(line["line"])
+            res.append(data)
+        # print(res)
 
-                    if ent.label_ == "CARDINAL" and ent.text.find(",")>=0:
-                        res.append(line["line"])
-
-                    if ent.label_ == "CARDINAL" and ent.text.find(".")>=0:
-                        res.append(line["line"])
-
-                    
-            except:
-                pass
-        print(res)
         return res
 
 

@@ -23,13 +23,13 @@ import os
 # print(filtered_text_data["txt"])
 
 import glob, os
-os.chdir("ocr/selected")
+os.chdir("ocr/selected/chi")
 response =""
 fo = open("annon.txt", "w+")
 for file in glob.glob("*.pdf"):
     print(file)
     ocr                = Ocr(source_document=file)
-    extracted_text     = ocr.extract_text(lang="eng+eng")
+    extracted_text     = ocr.extract_text(lang="chi_sim")
     launguage_code     = deduct_launguage.get_launguage_code(extracted_text)
     filtered_text_data = ocr.split_lines(extracted_text,launguage_code)
     txt=filtered_text_data["txt"]

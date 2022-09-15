@@ -8,7 +8,7 @@ from django import forms
 from api.models import *
 from Invoice_ocr import deduct_launguage
 from Invoice_ocr.predictor import Predictor
-
+import test
 
 def predictImage(request,pk):
     text =""
@@ -21,13 +21,22 @@ def predictImage(request,pk):
     predictor = Predictor(data=filtered_text_data)
     out= predictor.get_trained_ents()
     # print(out)
-    predictor.ProductLines()
+    
+    line_items=test.get_line_items(extracted_text["res_two"])
+    line_items=predictor.ProductLines(line_items)
+    # print(extracted_text)
 
     pdf = PDF.objects.get(pk=pk)
     if request.method == "POST":
         # print(request.POST)
         fileObj = request.FILES['cropped_result']
         text = pytesseract.image_to_string(convert_np_image(fileObj))
+
+    for i, j in out.items():
+        print(i, " : ", j)
+    for i in line_items:
+        print(i)
+        
         
     return render(request, 'cropper.html',{"k":text,"pdf":pdf,"out":out})
 
