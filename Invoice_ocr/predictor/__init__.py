@@ -28,7 +28,7 @@ class Predictor:
         matches = self.matcher(doc)
 
     def get_trained_ents(self):
-        nlp = spacy.load("/media/diwahar/Storage/AAITPRO/aait_ocr/annotation/train/model-best")
+        nlp = spacy.load("/media/diwahar/Storage/AAITPRO/aait_ocr/annotation/train/model-last")
         # nlp = spacy.load("en")
         data = dict()
         l=[
@@ -38,7 +38,6 @@ class Predictor:
         "INVOICE_DATE", #Required
         "DUE_DATE",
         "PO_NUMBER", #Required
-
         "SUB_TOTAL", #Required
         "TAX_AMOUNT", 
         "TOTAL_AMOUNT", #Required
@@ -46,19 +45,10 @@ class Predictor:
         "VAT_NUMBER",
 
         # "CURRENCY_RATE",
-
-        # "VENDOR_ADDRESS",
-        # "VENDOR_WEBSITE",
-        # "VENDOR_MOBILE",
-        # "VENDOR_EMAIL",
-        
-        
-       
-       
-        
-        
-
-        
+        "VENDOR_ADDRESS",
+        "VENDOR_WEBSITE",
+        "VENDOR_MOBILE",
+        "VENDOR_EMAIL", 
 
         ]
 
@@ -95,7 +85,6 @@ class Predictor:
 
 
     def getall_names(self):
-
         # print(ent.text, ent.start_char, ent.end_char, ent.label_)
         res = []
         doc = self.nlp(self.data["txt"])

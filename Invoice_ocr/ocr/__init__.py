@@ -1,4 +1,5 @@
 
+from cgitb import text
 from multiprocessing.connection import wait
 import re
 from time import sleep
@@ -12,7 +13,8 @@ import translators as ts
 import numpy
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import RegexpTokenizer
-from Invoice_ocr.ocr import image_processing
+from  Invoice_ocr.ocr import image_processing
+from Invoice_ocr import deduct_launguage
 
 # from deep_translator import *
 custom_config = r"""Arabic
@@ -175,7 +177,7 @@ custom_config = r"""Arabic
 +uzb_cyrl
 +vie
 +yid
-+yor --psm 10
++yor --psm 6
 """
 
 
@@ -409,16 +411,36 @@ class Ocr:
         full_response = ""
         images = convert_to_image.get_images(self.source_document,self.read_type)
         # thresh_one = self.pre_process_image(self.convert_np_image(images[-1]))
-        
+        cv2.imwrite("lang_detection.jpg",self.convert_np_image(images[0]))
+        lang_code=deduct_launguage.get_launguage_code_new("lang_detection.jpg")
+
+
+        split_image = self.split_images(self.pre_process_image(self.convert_np_image(images[0])))
+        header = pytesseract.image_to_string(split_image["top"],lang="eng",config="--psm 6")
+
+
 
         for i in range(len(images)):
             thresh_one = self.pre_process_image(self.convert_np_image(images[i]))
+            
+            # cv2.imwrite("out.jpg",thresh_one)
+            # print(self.detect_image_lang("out.jpg"))
             # border_removed_image = self.convert_np_image(images[i])
             # border_removed_image = image_processing.remove_border_lines(image=self.convert_np_image(images[i]))
             # thresh = self.pre_process_image(border_removed_image)
             # # print(self.detect_image_lang(thresh))
             # cv2.imwrite(str(i)+".jpg", thresh)
-            full_text = pytesseract.image_to_string(thresh_one,lang=lang,config="--psm 6")
+            print(lang_code)
+            if lang_code == "chi_sim":
+                full_text = pytesseract.image_to_string(thresh_one,lang=lang_code+"+eng",config="--psm 6")
+                full_text = full_text+"\n"+pytesseract.image_to_string(thresh_one[475:1961, 99:1196],lang="eng+"+lang_code,config="--psm 6")
+
+            else:
+                split_image = self.split_images(thresh_one)
+                full_text = pytesseract.image_to_string(thresh_one,lang="eng",config="--psm 6")
+
+            
+
             # print(full_text)
             # print(pytesseract.image_to_string(thresh_one,lang=lang,config="--psm 4"))
             # for ax in positions:
@@ -450,18 +472,28 @@ class Ocr:
 
             # full_response = full_response+full_text+"\n"
             response=response+full_text+"\n" 
-       
-       
-        return {"res_two":response}
+            
+        # a={"res_two":response}
+        # launguage_code     = deduct_launguage.get_launguage_code(a)
+        # print(launguage_code)
+        return {"res_two":response,"header":header}
 
     def detect_image_lang(self,img_path):
-        try:
-            osd = pytesseract.image_to_osd(img_path)
-            script = re.search("Script: ([a-zA-Z]+)\n", osd).group(1)
-            conf = re.search("Script confidence: (\d+\.?(\d+)?)", osd).group(1)
-            return script, float(conf)
-        except:
-            return None, 0.0
+        # try:
+        # config_str = '--dpi ' + str(img_path.info['dpi'][0])
+        osd = pytesseract.image_to_osd(img_path)
+        print(osd)
+        
+        script = re.search("Script: ([a-zA-Z]+)\n", osd).group(1)
+        conf = re.search("Script confidence: (\d+\.?(\d+)?)", osd).group(1)
+        return script, float(conf)
+        # except:
+        #     return None, 0.0
+
+    def detect_launguage(self,img_path):
+        text = pytesseract.image_to_string(img_path,config=custom_config)
+        # txt  = ts.google(text,to_language='en') 
+        return text
 
     def remove_empty_lines(self,txt):
         res=""
@@ -472,7 +504,7 @@ class Ocr:
         return res
 
     def split_lines(self,ntxt,lang):
-        part_txt = self.remove_empty_lines(ntxt["res_two"])
+        part_txt = self.remove_empty_lines(ntxt["header"])
         # print(part_txt)
         try:
             txt  = ts.google(part_txt,to_language='en')

@@ -10,7 +10,8 @@ import datefinder
 import spacy
 from predictor import Predictor
 import os
-
+import get_totals
+import prodict_linen_fliter
 
 # pdf_path = str(input("Enter the PDF Path : "))
 # lang =  input("Choose OCR Launguage :")
@@ -23,19 +24,34 @@ import os
 # print(filtered_text_data["txt"])
 
 import glob, os
-os.chdir("ocr/selected/chi")
+os.chdir("ocr/selected")
 response =""
+product_response =""
 fo = open("annon.txt", "w+")
+fl = open("prod.txt", "w+")
 for file in glob.glob("*.pdf"):
     print(file)
-    ocr                = Ocr(source_document=file)
-    extracted_text     = ocr.extract_text(lang="chi_sim")
+    ocr                = Ocr(source_document=file,read_type="path")
+    extracted_text     = ocr.extract_text(lang="eng")
     launguage_code     = deduct_launguage.get_launguage_code(extracted_text)
     filtered_text_data = ocr.split_lines(extracted_text,launguage_code)
+    
+    
     txt=filtered_text_data["txt"]
-    response = response+txt+"\n"+"---"+"\n"
+    txt= txt + "\n" + " ".join(get_totals.get_line_items(lines=extracted_text["res_two"]))
 
+
+
+
+    
+    
+    
+    ITEMS = "\n".join(prodict_linen_fliter.get_line_items(lines=extracted_text["res_two"]))
+    product_response = product_response+ITEMS+"\n"+"---"+"\n"
+    response = response+txt +"\n"+"---"+"\n"
+    
 fo.write(response)
+fl.write(product_response)
 
 
 
@@ -45,7 +61,7 @@ fo.write(response)
 # new_extrction = ocr.split_images(lang)
 # print(filtered_text_data)
 
-# predictor = Predictor(data=filtered_text_data)
+# 
 
 # print(predictor.get_trained_ents())
 # predictor.test_match()

@@ -28,7 +28,7 @@ def remove_border_lines(image):
     cv2.imwrite("result.jpg",result)
     return result
 
-remove_border_lines(cv2.imread("0.jpg"))
+remove_border_lines(cv2.imread("lang_detection.jpg"))
 
 flag = False
 ix = -1
@@ -55,7 +55,7 @@ def crop(event,x,y,flags,params):
         cropped = img[iy:fy,ix:fx]
         print([iy,fy,ix,fx])
         cv2.imwrite("cropped.png",cropped)
-        extraction = pytesseract.image_to_string(cropped,lang="chi_sim+eng")
+        extraction = pytesseract.image_to_string(cropped,lang="chi_sim",config="--psm 7 digits")
         print(extraction)
         txt  = ts.bing(extraction,to_language='en')
         print(txt)

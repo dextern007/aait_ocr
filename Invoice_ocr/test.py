@@ -35,7 +35,7 @@ def send_pdf_data(filename):
     data["lang"] = "eng"
 
     # data = json.dumps(data) # Convert it to json.
-    response = requests.post("http://38.130.130.45:9595/invoice-ocr/", data=data)
+    response = requests.post("http://127.0.0.1:8000/invoice-ocr/", data=data)
     return response.text
 
 

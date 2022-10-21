@@ -1,3 +1,4 @@
+import json
 
 from rest_framework.views import APIView
 from rest_framework import status
@@ -23,6 +24,28 @@ from api.models import UImage
 import test
 
 class OCRView(APIView):
+
+    def ocr_api(self,file):
+        from mindee import Client
+        mindee_client = Client().config_invoice("5efdda6a51833817b886d6062be9e977")
+
+        # Load a file from disk and parse it
+        api_response = mindee_client.doc_from_path("Invoice_ocr/ocr/selected/5.pdf").parse("invoice")
+
+        # Print a brief summary of the parsed data
+        data = dict()
+        for i in api_response.http_response["document"]["inference"]["pages"]:
+            for k,v in i["prediction"].items():
+                try:
+                    data[k] = v['value']
+                except:
+                    pass
+
+
+        return data
+
+
+
     def post(self,request,format=None):
         # return Response({"h":"a"})
         
@@ -41,12 +64,15 @@ class OCRView(APIView):
         launguage_code     = deduct_launguage.get_launguage_code(extracted_text)
         filtered_text_data = ocr.split_lines(extracted_text,launguage_code)
         predictor = Predictor(data=filtered_text_data)
-        out= predictor.get_trained_ents()
+
+        trained= predictor.get_trained_ents()
         # print(out)
+        out=self.ocr_api(file=base64.b64decode(file.encode('utf-8')))
         
         line_items=test.get_line_items(extracted_text["res_two"])
         line_items=predictor.ProductLines(line_items)
         out["line_items"]=line_items
+        out["trained"]=trained
         # print(extracted_text)
 
         
